@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import edu.stanford.nlp.coref.docreader.CoNLLDocumentReader.NamedEntityAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.MentionsAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.NamedEntityTagAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.PartOfSpeechAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -73,7 +75,8 @@ public class StandfordNLPModels {
         // run all Annotators on this text
         pipeline.annotate(document);
         //interpretTheOutput(document);
-        generateDepedencyTree(document);
+       // generateDepedencyTree(document);
+        entityMentionsTest();
         System.out.println( "End of Processing" );
     }
 	
@@ -151,9 +154,46 @@ public class StandfordNLPModels {
         }
         }
 
-	}
-
 	
 
+	
+/*
+ * Testing entityMentions annotator and its significance
+ * 
+ * 
+ */
 
+public static void entityMentionsTest() {
+	
+	
+	String testString = "Joe Smith went to America";
+	//creating the pipeline first :
+	Properties props = new Properties();
 
+    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, entitymentions");
+
+    StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+    
+ // read some text in the text variable
+    String text = "She went to America last week.";
+
+    // create an empty Annotation just with the given text
+    Annotation document = new Annotation(testString);
+
+    // run all Annotators on this text
+    pipeline.annotate(document);
+    
+ // these are all the sentences in this document
+   // List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+
+    List<CoreMap> mutliwordexpr = document.get(MentionsAnnotation.class); 
+    
+    for(CoreMap multiword : mutliwordexpr) {
+    	System.out.println(multiword);
+    	String custner = multiword.get(NamedEntityTagAnnotation.class);//this is for recognizing any named entity
+    	System.out.println("Entity is " + custner);
+    	
+    }
+    
+}
+}
