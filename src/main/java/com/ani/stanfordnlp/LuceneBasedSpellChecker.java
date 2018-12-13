@@ -23,8 +23,18 @@ public class LuceneBasedSpellChecker {
 	 * @param args
 	 * 
 	 * 
+	 * Basic spell checker Test.
 	 * 
-	 * /Users/aniket/Documents/workspace/luceneIndexTestOnly
+	 * This is based on Lucene based spell checker library.
+	 * 
+	 * Note : That the lucene spell checker library is present in Lucene suggest , so gradle has dependency of lucene suggest
+	 * 
+	 * 
+	 * 
+	 * 
+	 * /Users/aniket/Documents/workspace/luceneSetup/TestDictionary is present under the resources folder , only for reference purpose.
+	 * 
+	 * Always keep the above file upto date with the TestDictionary under luceneSetup , to avoid any confusion.
 	 *
 	 */
 	
@@ -38,15 +48,35 @@ public class LuceneBasedSpellChecker {
 			SpellChecker spellChecker = new SpellChecker(directory);
 			
 			Path dictonaryPath = Paths.get("/Users/aniket/Documents/workspace/luceneSetup/TestDictionary");
+			
+			/*
+			 * To do :
+			 * 
+			 * The below field needs to be explored futher
+			 * 
+			 *https://lucene.apache.org/core/7_4_0/core/org/apache/lucene/index/IndexWriterConfig.html
+			 *
+			 * 
+			 */
 			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(new WhitespaceAnalyzer()).setOpenMode(IndexWriterConfig
-		            .OpenMode.CREATE);
+		            .OpenMode.CREATE);//This  mandatory field helps in the creation of index.
+			
 			spellChecker.indexDictionary(new PlainTextDictionary(dictonaryPath),indexWriterConfig,false); 
 			
-			String trialWord = "wrod";
+			//String trialWord = "wrod";
+			
+			String trialWord ="WORD";
+			
 			
 			int totalSuggestions = 3;
 			
-			String [] suggestedWords = spellChecker.suggestSimilar(trialWord, totalSuggestions);
+			/*
+			 * To do :
+			 * 
+			 * Check the performance of ngrams against levenstein edit distance.
+			 * 
+			 */
+			String [] suggestedWords = spellChecker.suggestSimilar(trialWord, totalSuggestions);//Uses Levenstein distance by default.
 			
 			if(suggestedWords!=null & suggestedWords.length>0) {
 			for(String suggestedWord : suggestedWords) {
@@ -54,6 +84,16 @@ public class LuceneBasedSpellChecker {
 			} } else {
 				System.out.println("No suggestion available");
 			}
+			
+			/*
+			 * 
+			 * 
+			 * try case
+			 * 
+			 * the dictionary has a lower case word.
+			 * 
+			 */
+			
 			
 			spellChecker.close();
 			
